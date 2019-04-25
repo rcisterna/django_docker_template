@@ -45,9 +45,11 @@ if [ ! -e "${LETSENCRYPT_DIR}/cntx_ssl_done" ]; then
 fi
 
 # Actualiza el certificado si se creó para dominios distintos
-if [[ $(< ${LETSENCRYPT_DIR}/cntx_ssl_done) != "$str" ]]; then
+if [[ "$(cat ${LETSENCRYPT_DIR}/cntx_ssl_done)" != "${DDT_DOMAINS}" ]]; then
 	echo "### DDT: CERTBOT -- UPDATE CERTIFICATE"
-	certbot certonly --cert-name ${DDT_SSL_NAME} --domains ${DDT_DOMAINS// /,}
+	certbot certonly --non-interactive --webroot --webroot-path ${DDT_ROOT}/certbot \
+		--cert-name ${DDT_SSL_NAME} --email ${DDT_SSL_MAIL} --agree-tos \
+		--domains ${DDT_DOMAINS// /,}
 
 	if [ $? -eq 0 ]; then
 		echo ${DDT_DOMAINS} > ${LETSENCRYPT_DIR}/cntx_ssl_done
