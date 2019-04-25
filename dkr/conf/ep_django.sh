@@ -7,4 +7,4 @@ python ${DDT_ROOT}/src/manage.py sucreator || exit 1
 
 echo "### DDT: DJANGO -- GUNICORN"
 python ${DDT_ROOT}/src/manage.py collectstatic --no-input \
-&& gunicorn -c ${DDT_ROOT}/src/conf/gunicorn.py pypi.wsgi:application
+&& gunicorn -c ${DDT_ROOT}/conf/gunicorn.py pypi.wsgi:application

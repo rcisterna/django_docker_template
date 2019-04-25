@@ -18,13 +18,14 @@ services:
         - POETRY_VERSION=${POETRY_VERSION}
     env_file:
       - .env
-    volumes:
-      - ./:${DDT_ROOT}/src/
-      - vol_static:${DDT_ROOT}/static
-      - vol_media:${DDT_ROOT}/media
     entrypoint:
       - sh
-      - ${DDT_ROOT}/src/conf/ep_django.sh
+      - ${DDT_ROOT}/conf/ep_django.sh
+    volumes:
+      - ./:${DDT_ROOT}/src/
+      - ./dkr/conf:${DDT_ROOT}/conf/
+      - vol_static:${DDT_ROOT}/static
+      - vol_media:${DDT_ROOT}/media
     networks:
       - net_postgresdb
       - net_nginx
@@ -37,9 +38,9 @@ services:
       - .env
     entrypoint:
       - sh
-      - ${DDT_ROOT}/src/conf/ep_certbot.sh
+      - ${DDT_ROOT}/conf/ep_certbot.sh
     volumes:
-      - ./conf/:${DDT_ROOT}/src/conf/
+      - ./dkr/conf/:${DDT_ROOT}/conf/
       - vol_letsencrypt:/etc/letsencrypt
       - vol_certbot:${DDT_ROOT}/certbot
     restart: 'always'
@@ -50,15 +51,15 @@ services:
       - 443:443
     env_file:
       - .env
+    entrypoint:
+      - sh
+      - ${DDT_ROOT}/conf/ep_nginx.sh
     volumes:
-      - ./conf/:${DDT_ROOT}/src/conf/
+      - ./dkr/conf/:${DDT_ROOT}/conf/
       - vol_static:${DDT_ROOT}/static
       - vol_media:${DDT_ROOT}/media
       - vol_letsencrypt:/etc/letsencrypt
       - vol_certbot:${DDT_ROOT}/certbot
-    entrypoint:
-      - sh
-      - ${DDT_ROOT}/src/conf/ep_nginx.sh
     networks:
       - net_nginx
     depends_on:
@@ -79,17 +80,17 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: ${PWD}/vol/static
+      device: ${PWD}/dkr/vol/static
       o: bind
   vol_media:
     driver: local
     driver_opts:
       type: none
-      device: ${PWD}/vol/media
+      device: ${PWD}/dkr/vol/media
       o: bind
   vol_letsencrypt:
     driver: local
     driver_opts:
       type: none
-      device: ${PWD}/vol/letsencrypt
+      device: ${PWD}/dkr/vol/letsencrypt
       o: bind
