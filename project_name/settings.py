@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '6nnqqf4-n3zzhz=-q*_h7joa%5vpyyyj$6y+fg1fim^8qnfu1+'
+SECRET_KEY = os.environ['DDT_SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ['DDT_ENV'] != 'production'
@@ -34,7 +34,6 @@ ALLOWED_HOSTS = os.environ['DDT_DOMAINS'].split()
 
 INSTALLED_APPS = [
     'commands',
-    'proyectos',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
