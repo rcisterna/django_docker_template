@@ -12,6 +12,7 @@ services:
   django:  # Contenedor django + gunicorn
     build:
       context: .
+      dockerfile: ./dkr/dockerfile-django-gunicorn
       args:
         - DDT_ENV=${DDT_ENV}
         - DDT_SRC_DIR=${DDT_ROOT}/src
