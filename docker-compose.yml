@@ -1,0 +1,95 @@
+version: '3.7'
+
+services:
+  postgresdb:  # Contenedor postgres
+    image: postgres:10
+    volumes:
+      - vol_postgresdb:/var/lib/postgresql/data
+    env_file:
+      - .env
+    networks:
+      - net_postgresdb
+  django:  # Contenedor django + gunicorn
+    build:
+      context: .
+      args:
+        - DDT_ENV=${DDT_ENV}
+        - DDT_SRC_DIR=${DDT_ROOT}/src
+        - POETRY_VERSION=${POETRY_VERSION}
+    env_file:
+      - .env
+    volumes:
+      - ./:${DDT_ROOT}/src/
+      - vol_static:${DDT_ROOT}/static
+      - vol_media:${DDT_ROOT}/media
+    entrypoint:
+      - sh
+      - ${DDT_ROOT}/src/conf/ep_django.sh
+    networks:
+      - net_postgresdb
+      - net_nginx
+    depends_on:
+      - postgresdb
+    restart: 'always'
+  certbot:  # Contenedor certbot (certificados SSL)
+    image: certbot/certbot
+    env_file:
+      - .env
+    entrypoint:
+      - sh
+      - ${DDT_ROOT}/src/conf/ep_certbot.sh
+    volumes:
+      - ./conf/:${DDT_ROOT}/src/conf/
+      - vol_letsencrypt:/etc/letsencrypt
+      - vol_certbot:${DDT_ROOT}/certbot
+    restart: 'always'
+  nginx:  # Contenedor nginx (reverse proxy)
+    image: nginx:1.16.0
+    ports:
+      - ${DDT_PORT}:80
+      - 443:443
+    env_file:
+      - .env
+    volumes:
+      - ./conf/:${DDT_ROOT}/src/conf/
+      - vol_static:${DDT_ROOT}/static
+      - vol_media:${DDT_ROOT}/media
+      - vol_letsencrypt:/etc/letsencrypt
+      - vol_certbot:${DDT_ROOT}/certbot
+    entrypoint:
+      - sh
+      - ${DDT_ROOT}/src/conf/ep_nginx.sh
+    networks:
+      - net_nginx
+    depends_on:
+      - django
+      - certbot
+    restart: 'always'
+
+networks:
+  net_postgresdb:
+    driver: bridge
+  net_nginx:
+    driver: bridge
+
+volumes:
+  vol_postgresdb:
+  vol_certbot:
+  vol_static:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${PWD}/vol/static
+      o: bind
+  vol_media:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${PWD}/vol/media
+      o: bind
+  vol_letsencrypt:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${PWD}/vol/letsencrypt
+      o: bind
