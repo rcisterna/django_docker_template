@@ -9,19 +9,23 @@ server {
     listen                      [::]:80;
     server_name                 ${DDT_DOMAINS};
 
+    # Ruta que utiliza ACME-challenge
     location /.well-known/acme-challenge/ {
         autoindex               on;
         root                    ${DDT_ROOT}/certbot;
     }
 
+    # Ruta que sirve archivos estaticos
     location /static/ {
         alias                   ${DDT_ROOT}/static/;
     }
 
+    # Ruta que sirve archivos multimedia
     location /media/ {
         alias                   ${DDT_ROOT}/media/;
     }
 
+    # Proxy-pass a gunicorn
     location / {
         proxy_pass              http://django_server;
         proxy_set_header        Host ${DOLLAR}host;
@@ -30,10 +34,5 @@ server {
 
         proxy_set_header        X-Forwarded-For ${DOLLAR}proxy_add_x_forwarded_for;
         proxy_set_header        X-Forwarded-Proto http;
-        # proxy_redirect          off;
-        # if (!-f ${DOLLAR}request_filename) {
-        #     proxy_pass http://django_server;
-        #     break;
-        # }
     }
 }

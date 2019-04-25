@@ -9,19 +9,13 @@ server {
     listen                      [::]:80;
     server_name                 ${DDT_DOMAINS};
 
+    # Ruta que utiliza ACME-challenge
     location /.well-known/acme-challenge/ {
         autoindex               on;
         root                    ${DDT_ROOT}/certbot;
     }
 
-    location /static/ {
-        alias                   ${DDT_ROOT}/static/;
-    }
-
-    location /media/ {
-        alias                   ${DDT_ROOT}/media/;
-    }
-
+    # Redirección de todo el tráfico a HTTPS
     location / {
         return                  301 https://${DOLLAR}host${DOLLAR}request_uri;
     }
@@ -43,14 +37,17 @@ server {
     include                     /etc/letsencrypt/options-ssl-nginx.conf;
     ssl_protocols               TLSv1.2 TLSv1.3;
 
+    # Ruta que sirve archivos estaticos
     location /static/ {
         alias                   ${DDT_ROOT}/static/;
     }
 
+    # Ruta que sirve archivos multimedia
     location /media/ {
         alias                   ${DDT_ROOT}/media/;
     }
 
+    # Proxy-pass a gunicorn
     location / {
         proxy_pass              http://django_server;
         proxy_set_header        Host ${DOLLAR}host;
@@ -59,10 +56,5 @@ server {
 
         proxy_set_header        X-Forwarded-For ${DOLLAR}proxy_add_x_forwarded_for;
         proxy_set_header        X-Forwarded-Proto http;
-        # proxy_redirect          off;
-        # if (!-f ${DOLLAR}request_filename) {
-        #     proxy_pass http://django_server;
-        #     break;
-        # }
     }
 }

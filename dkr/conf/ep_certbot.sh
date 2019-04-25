@@ -1,5 +1,6 @@
 #!/usr/bin/env sh
 
+# Si no está en producción, no hace nada y espera a ser terminado
 if [ "$DDT_ENV" != "production" ]; then
 	echo "### DDT: CERTBOT -- DEV"
 	trap exit TERM; while :; do sleep 12h & wait $!; done;
