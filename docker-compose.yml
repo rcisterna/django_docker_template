@@ -29,21 +29,9 @@ services:
       - vol_media:${DDT_ROOT}/media
     networks:
       - net_postgresdb
-      - net_nginx
+      - net_django
     depends_on:
       - postgresdb
-    restart: 'always'
-  certbot:  # Contenedor certbot (certificados SSL)
-    image: certbot/certbot
-    env_file:
-      - .env
-    entrypoint:
-      - sh
-      - ${DDT_ROOT}/conf/ep_certbot.sh
-    volumes:
-      - ./dkr/conf/:${DDT_ROOT}/conf/
-      - vol_letsencrypt:/etc/letsencrypt
-      - vol_certbot:${DDT_ROOT}/certbot
     restart: 'always'
   nginx:  # Contenedor nginx (reverse proxy)
     image: nginx:1.16-alpine
@@ -63,13 +51,30 @@ services:
       - vol_certbot:${DDT_ROOT}/certbot
     networks:
       - net_nginx
+      - net_django
     depends_on:
       - django
       - certbot
     restart: 'always'
+  certbot:  # Contenedor certbot (certificados SSL)
+    image: certbot/certbot
+    env_file:
+      - .env
+    entrypoint:
+      - sh
+      - ${DDT_ROOT}/conf/ep_certbot.sh
+    volumes:
+      - ./dkr/conf/:${DDT_ROOT}/conf/
+      - vol_letsencrypt:/etc/letsencrypt
+      - vol_certbot:${DDT_ROOT}/certbot
+    networks:
+      - net_nginx
+    restart: 'always'
 
 networks:
   net_postgresdb:
+    driver: bridge
+  net_django:
     driver: bridge
   net_nginx:
     driver: bridge

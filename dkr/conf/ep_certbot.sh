@@ -1,5 +1,10 @@
 #!/usr/bin/env sh
 
+# Espera que el servicio de nginx haya sido lanzado
+echo "### DDT: NGINX -- WAITING FOR NGINX"
+export NGINX_STATUS_CMD="wget --server-response --spider http://nginx:80 2>&1 | grep "HTTP/" | awk '{print $2}'"
+while [ -z "$(eval ${NGINX_STATUS_CMD})" ]; do sleep 1s; done
+
 # Si no está en producción, no hace nada y espera a ser terminado
 if [ "$DDT_ENV" != "production" ]; then
 	echo "### DDT: CERTBOT -- DEV"
