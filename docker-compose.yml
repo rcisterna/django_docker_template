@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   postgresdb:  # Contenedor postgres
-    image: postgres:10
+    image: postgres:11-alpine
     volumes:
       - vol_postgresdb:/var/lib/postgresql/data
     env_file:
@@ -46,7 +46,7 @@ services:
       - vol_certbot:${DDT_ROOT}/certbot
     restart: 'always'
   nginx:  # Contenedor nginx (reverse proxy)
-    image: nginx:1.16.0
+    image: nginx:1.16-alpine
     ports:
       - ${DDT_PORT}:80
       - 443:443
