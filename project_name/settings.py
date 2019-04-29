@@ -19,15 +19,17 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
+INSIDE_DOCKER = os.environ.get('DDT_IN_DKR', 'false') == 'true'
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ['DDT_SECRET_KEY']
+SECRET_KEY = os.environ['DDT_SECRET_KEY'] if INSIDE_DOCKER else 50 * '-'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ['DDT_ENV'] != 'production'
+DEBUG = os.environ['DDT_ENV'] != 'production' if INSIDE_DOCKER else True
 
-SESSION_COOKIE_SECURE = CSRF_COOKIE_SECURE = os.environ['DDT_ENV'] == 'production'
+SESSION_COOKIE_SECURE = CSRF_COOKIE_SECURE = os.environ['DDT_ENV'] == 'production' if INSIDE_DOCKER else False
 
-ALLOWED_HOSTS = os.environ['DDT_DOMAINS'].split()
+ALLOWED_HOSTS = os.environ['DDT_DOMAINS'].split() if INSIDE_DOCKER else []
 
 
 # Application definition
@@ -79,9 +81,9 @@ WSGI_APPLICATION = '{{ project_name }}.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ['POSTGRES_DB'],
-        'USER': os.environ['POSTGRES_USER'],
-        'PASSWORD': os.environ['POSTGRES_PASSWORD'],
+        'NAME': os.environ['POSTGRES_DB'] if INSIDE_DOCKER else None,
+        'USER': os.environ['POSTGRES_USER'] if INSIDE_DOCKER else None,
+        'PASSWORD': os.environ['POSTGRES_PASSWORD'] if INSIDE_DOCKER else None,
         'HOST': 'postgresdb',
         'PORT': '5432',
     },
@@ -125,5 +127,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(os.environ['DDT_ROOT'], 'static')
-MEDIA_ROOT = os.path.join(os.environ['DDT_ROOT'], 'media')
+STATIC_ROOT = os.path.join(os.environ['DDT_ROOT'] if INSIDE_DOCKER else BASE_DIR, 'static')
+MEDIA_ROOT = os.path.join(os.environ['DDT_ROOT'] if INSIDE_DOCKER else BASE_DIR, 'media')
