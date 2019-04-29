@@ -1,5 +1,9 @@
 #!/usr/bin/env sh
 
+# Espera por la base de datos
+echo "### DDT: DJANGO -- SUPERUSER"
+python ${DDT_ROOT}/src/manage.py wait_db || exit 1
+
 # Intenta migrar
 echo "### DDT: DJANGO -- MIGRATE"
 python ${DDT_ROOT}/src/manage.py migrate --no-input || exit 1
