@@ -15,4 +15,10 @@ python ${DDT_ROOT}/src/manage.py sucreator || exit 1
 # Recolecta los archivos estáticos y ejecuta servidor gunicorn
 echo "### DDT: DJANGO -- GUNICORN"
 python ${DDT_ROOT}/src/manage.py collectstatic --no-input \
-&& gunicorn -c ${DDT_ROOT}/conf/gunicorn.py {{ project_name }}.wsgi:application
+&& gunicorn {{ project_name }}.wsgi:application \
+	--name {{ project_name }} \
+	--log-level $([[ "$DDT_ENV" != "production" ]] && echo "info" || echo "warning") \
+	--error-logfile '-' \
+	--access-logfile '-' \
+	--workers 2 \
+	--bind 0.0.0.0:8000
