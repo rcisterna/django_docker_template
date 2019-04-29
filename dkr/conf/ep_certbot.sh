@@ -17,10 +17,6 @@ export LETSENCRYPT_DIR=/etc/letsencrypt
 # Crea el certificado si no existe
 if [ ! -e "${LETSENCRYPT_DIR}/cntx_ssl_done" ]; then
 	echo "### DDT: CERTBOT -- NEW CERTIFICATE"
-	rm -rf ${LETSENCRYPT_DIR}/live/${DDT_SSL_NAME} && \
-	rm -rf ${LETSENCRYPT_DIR}/archive/${DDT_SSL_NAME} && \
-	rm -rf ${LETSENCRYPT_DIR}/renewal/${DDT_SSL_NAME}.conf
-
 	mkdir -p ${LETSENCRYPT_DIR}/live/${DDT_SSL_NAME}
 
 	if [ ! -e "${LETSENCRYPT_DIR}/options-ssl-nginx.conf" ]; then
@@ -41,24 +37,7 @@ if [ ! -e "${LETSENCRYPT_DIR}/cntx_ssl_done" ]; then
 
 	if [ $? -eq 0 ]; then
 		echo ${DDT_DOMAINS} > ${LETSENCRYPT_DIR}/cntx_ssl_done
-		sleep 3s
-		echo "### DDT: CERTBOT -- CERTIFICATE SUCCESS"
-	else
-		echo "### DDT: CERTBOT -- CERTIFICATE FAILURE"
-	fi
-	exit
-fi
-
-# Actualiza el certificado si se creó para dominios distintos
-if [[ "$(cat ${LETSENCRYPT_DIR}/cntx_ssl_done)" != "${DDT_DOMAINS}" ]]; then
-	echo "### DDT: CERTBOT -- UPDATE CERTIFICATE"
-	certbot certonly --non-interactive --webroot --webroot-path ${DDT_ROOT}/certbot \
-		--cert-name ${DDT_SSL_NAME} --email ${DDT_SSL_MAIL} --agree-tos \
-		--domains ${DDT_DOMAINS// /,}
-
-	if [ $? -eq 0 ]; then
-		echo ${DDT_DOMAINS} > ${LETSENCRYPT_DIR}/cntx_ssl_done
-		sleep 3s
+		sleep 2s
 		echo "### DDT: CERTBOT -- CERTIFICATE SUCCESS"
 	else
 		echo "### DDT: CERTBOT -- CERTIFICATE FAILURE"

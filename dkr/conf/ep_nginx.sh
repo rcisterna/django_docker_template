@@ -15,13 +15,21 @@ if [ "$DDT_ENV" != "production" ]; then
     exit
 fi
 
+export LETSENCRYPT_DIR=/etc/letsencrypt
+
+# Si los certificados se crearon para dominios distintos, los elimina
+if [ -e "${LETSENCRYPT_DIR}/cntx_ssl_done" ] && [[ "$(cat ${LETSENCRYPT_DIR}/cntx_ssl_done)" != "${DDT_DOMAINS}" ]]; then
+	echo "### DDT: NGINX -- OBSOLETE CERTIFICATE"
+	rm -rf ${LETSENCRYPT_DIR}/cntx_ssl_done
+fi
+
 # Si no están listos los certificados, se ejecuta con la configuración básica
 # (sin SSL), y se reinicia apenas se hayan creado los certificados
-if [ ! -e "/etc/letsencrypt/cntx_ssl_done" ]; then
+if [ ! -e "${LETSENCRYPT_DIR}/cntx_ssl_done" ]; then
 	echo "### DDT: NGINX -- ACME-CHALLENGE"
     envsubst < ${DDT_ROOT}/conf/nginx.basic.template > /etc/nginx/conf.d/local.conf
 	nginx -g "daemon on;"
-	while [ ! -e "/etc/letsencrypt/cntx_ssl_done" ]; do sleep 1s; done
+	while [ ! -e "${LETSENCRYPT_DIR}/cntx_ssl_done" ]; do sleep 0.5s; done
 	nginx -s stop
 	exit
 fi
