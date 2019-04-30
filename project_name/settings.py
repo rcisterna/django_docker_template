@@ -79,16 +79,19 @@ WSGI_APPLICATION = '{{ project_name }}.wsgi.application'
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ['POSTGRES_DB'] if INSIDE_DOCKER else None,
-        'USER': os.environ['POSTGRES_USER'] if INSIDE_DOCKER else None,
-        'PASSWORD': os.environ['POSTGRES_PASSWORD'] if INSIDE_DOCKER else None,
-        'HOST': 'postgresdb',
-        'PORT': '5432',
-    },
+    'default': {},
 }
 
+if INSIDE_DOCKER:
+    DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql_psycopg2'
+    DATABASES['default']['NAME'] = os.environ['POSTGRES_DB']
+    DATABASES['default']['USER'] = os.environ['POSTGRES_USER']
+    DATABASES['default']['PASSWORD'] = os.environ['POSTGRES_PASSWORD']
+    DATABASES['default']['HOST'] = 'postgresdb'
+    DATABASES['default']['PORT'] = '5432'
+else:
+    DATABASES['default']['ENGINE'] = 'django.db.backends.sqlite3'
+    DATABASES['default']['NAME'] = os.path.join(BASE_DIR, 'db.sqlite3')
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
