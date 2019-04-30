@@ -4,6 +4,10 @@
 echo "### DDT: DJANGO -- WAITING FOR DB"
 python ${DDT_ROOT}/src/manage.py wait_db || exit 1
 
+# Revisa si faltan migraciones que crear
+echo "### DDT: DJANGO -- CHECK PENDING MIGRATIONS"
+poetry run python manage.py makemigrations --check --dry-run --no-input || exit 1
+
 # Intenta migrar
 echo "### DDT: DJANGO -- MIGRATE"
 python ${DDT_ROOT}/src/manage.py migrate --no-input || exit 1
