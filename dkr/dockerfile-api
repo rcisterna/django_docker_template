@@ -11,7 +11,7 @@ mkdir -p "${DDT_SRC_DIR}" && \
 pip --disable-pip-version-check install "poetry==$POETRY_VERSION" && \
 poetry config settings.virtualenvs.create false
 
-COPY pyproject.toml poetry.lock "${DDT_SRC_DIR}"/
+COPY ./api/pyproject.toml ./api/poetry.lock "${DDT_SRC_DIR}"/
 WORKDIR "${DDT_SRC_DIR}"/
 
 RUN \

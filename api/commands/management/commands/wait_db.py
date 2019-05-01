@@ -14,7 +14,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """Handle the command"""
-        self.stdout.write('Revisando disponibilidad de la base de datos...')
         tmax = timedelta(seconds=options['time'])
         tstart = datetime.now()
         connected = False

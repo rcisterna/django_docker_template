@@ -2,10 +2,10 @@
 export DOLLAR=$
 rm -f /etc/nginx/conf.d/default.conf
 
-# Espera que el servicio de django haya sido lanzado
-echo "### DDT: NGINX -- WAITING FOR DJANGO"
-export DJANGO_STATUS_CMD="wget --server-response --spider http://django:8000 2>&1 | grep "HTTP/" | awk '{print $2}'"
-while [ -z "$(eval ${DJANGO_STATUS_CMD})" ]; do sleep 1s; done
+# Espera que el servicio de api haya sido lanzado
+echo "### DDT: NGINX -- WAITING FOR API"
+export API_STATUS_CMD="wget --server-response --spider http://api:8000 2>&1 | grep "HTTP/" | awk '{print $2}'"
+while [ -z "$(eval ${API_STATUS_CMD})" ]; do sleep 1s; done
 
 # Si no está en producción, se ejecuta con la configuración básica (sin SSL)
 if [ "$DDT_ENV" != "production" ]; then

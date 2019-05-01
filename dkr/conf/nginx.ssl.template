@@ -1,6 +1,6 @@
 # Django server al que se hará el reverse proxy
-upstream django_server {
-    server django:8000;
+upstream api_server {
+    server api:8000;
 }
 
 # *:80 para conexiones http
@@ -49,7 +49,7 @@ server {
 
     # Proxy-pass a gunicorn
     location / {
-        proxy_pass              http://django_server;
+        proxy_pass              http://api_server;
         proxy_set_header        Host ${DOLLAR}host;
         proxy_set_header        X-Real-IP ${DOLLAR}remote_addr;
         proxy_http_version      1.1;

@@ -9,10 +9,10 @@ services:
       - .env
     networks:
       - net_postgresdb
-  django:  # Contenedor django + gunicorn
+  api:  # Contenedor django + gunicorn
     build:
-      context: .
-      dockerfile: ./dkr/dockerfile-django-gunicorn
+      context: ./
+      dockerfile: ./dkr/dockerfile-api
       args:
         - DDT_ENV=${DDT_ENV}
         - DDT_SRC_DIR=${DDT_ROOT}/src
@@ -21,15 +21,15 @@ services:
       - .env
     entrypoint:
       - sh
-      - ${DDT_ROOT}/conf/ep_django.sh
+      - ${DDT_ROOT}/conf/ep_api.sh
     volumes:
-      - ./:${DDT_ROOT}/src/
+      - ./api/:${DDT_ROOT}/src/
       - ./dkr/conf:${DDT_ROOT}/conf/
       - vol_static:${DDT_ROOT}/static
       - vol_media:${DDT_ROOT}/media
     networks:
       - net_postgresdb
-      - net_django
+      - net_api
     depends_on:
       - postgresdb
     restart: 'always'
@@ -51,9 +51,9 @@ services:
       - vol_certbot:${DDT_ROOT}/certbot
     networks:
       - net_nginx
-      - net_django
+      - net_api
     depends_on:
-      - django
+      - api
       - certbot
     restart: 'always'
   certbot:  # Contenedor certbot (certificados SSL)
@@ -74,7 +74,7 @@ services:
 networks:
   net_postgresdb:
     driver: bridge
-  net_django:
+  net_api:
     driver: bridge
   net_nginx:
     driver: bridge
