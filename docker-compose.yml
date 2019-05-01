@@ -33,6 +33,23 @@ services:
     depends_on:
       - postgresdb
     restart: 'always'
+  vue:  # Contenedor vue + http-server
+    build:
+      context: ./
+      dockerfile: ./dkr/dockerfile-vue
+      args:
+        - DDT_ROOT=${DDT_ROOT}
+    env_file:
+      - .env
+    entrypoint:
+      - sh
+      - ${DDT_ROOT}/conf/ep_vue.sh
+    volumes:
+      - ./vue/src/:${DDT_ROOT}/src/
+      - ./dkr/conf:${DDT_ROOT}/conf/
+    networks:
+      - net_vue
+    restart: 'always'
   nginx:  # Contenedor nginx (reverse proxy)
     image: nginx:1.16-alpine
     ports:
@@ -52,9 +69,10 @@ services:
     networks:
       - net_nginx
       - net_api
+      - net_vue
     depends_on:
       - api
-      - certbot
+      - vue
     restart: 'always'
   certbot:  # Contenedor certbot (certificados SSL)
     image: certbot/certbot
@@ -69,12 +87,16 @@ services:
       - vol_certbot:${DDT_ROOT}/certbot
     networks:
       - net_nginx
+    depends_on:
+      - nginx
     restart: 'always'
 
 networks:
   net_postgresdb:
     driver: bridge
   net_api:
+    driver: bridge
+  net_vue:
     driver: bridge
   net_nginx:
     driver: bridge

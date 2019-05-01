@@ -33,10 +33,10 @@ if [ ! -e "${LETSENCRYPT_DIR}/cntx_ssl_done" ]; then
     # para no superar el rate limit semanal
 	certbot certonly --non-interactive --webroot --webroot-path ${DDT_ROOT}/certbot \
 		--cert-name ${DDT_SSL_NAME} --email ${DDT_SSL_MAIL} --agree-tos \
-		--domains ${DDT_DOMAINS// /,} --force-renewal
+		--domains ${DDT_API_DOMAINS// /,},${DDT_VUE_DOMAINS// /,} --force-renewal
 
 	if [ $? -eq 0 ]; then
-		echo ${DDT_DOMAINS} > ${LETSENCRYPT_DIR}/cntx_ssl_done
+		echo "${DDT_API_DOMAINS} ${DDT_VUE_DOMAINS}" > ${LETSENCRYPT_DIR}/cntx_ssl_done
 		sleep 2s
 		echo "### DDT: CERTBOT -- CERTIFICATE SUCCESS"
 	else

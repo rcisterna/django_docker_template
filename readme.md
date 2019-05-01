@@ -11,7 +11,7 @@ Template sencillo para Django 2.0+
 ```bash
 django-admin startproject \
 	--template=https://github.com/rcisterna/django_docker_template/archive/master.zip \
-	--extension=py,sh,toml,env,example \
+	--extension=py,sh,toml,env,example,json,html,md \
 	<projectname>
 
 poetry lock

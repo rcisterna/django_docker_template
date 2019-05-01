@@ -29,7 +29,7 @@ DEBUG = os.environ['DDT_ENV'] != 'production' if INSIDE_DOCKER else True
 
 SESSION_COOKIE_SECURE = CSRF_COOKIE_SECURE = os.environ['DDT_ENV'] == 'production' if INSIDE_DOCKER else False
 
-ALLOWED_HOSTS = os.environ['DDT_DOMAINS'].split() if INSIDE_DOCKER else []
+ALLOWED_HOSTS = os.environ['DDT_API_DOMAINS'].split() if INSIDE_DOCKER else []
 
 
 # Application definition
