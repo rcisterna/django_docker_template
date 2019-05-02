@@ -15,7 +15,7 @@ while [ -z "$(eval ${VUE_STATUS_CMD})" ]; do sleep 1s; done
 # Si no está en producción, se ejecuta con la configuración básica (sin SSL)
 if [ "$DDT_ENV" != "production" ]; then
 	echo "### DDT: NGINX -- DEV"
-    envsubst < ${DDT_ROOT}/conf/nginx.basic.template > /etc/nginx/conf.d/local.conf
+    envsubst < ${DDT_ROOT}/templates/basic.conf > /etc/nginx/conf.d/local.conf
 	nginx -g "daemon off;"
     exit
 fi
@@ -32,7 +32,7 @@ fi
 # (sin SSL), y se reinicia apenas se hayan creado los certificados
 if [ ! -e "${LETSENCRYPT_DIR}/cntx_ssl_done" ]; then
 	echo "### DDT: NGINX -- ACME-CHALLENGE"
-    envsubst < ${DDT_ROOT}/conf/nginx.basic.template > /etc/nginx/conf.d/local.conf
+    envsubst < ${DDT_ROOT}/templates/basic.conf > /etc/nginx/conf.d/local.conf
 	nginx -g "daemon on;"
 	while [ ! -e "${LETSENCRYPT_DIR}/cntx_ssl_done" ]; do sleep 0.5s; done
 	nginx -s stop
@@ -42,5 +42,5 @@ fi
 # Se ejecuta con la configuración SSL, mientras en el background queda un loop
 # infinito para revisar renovación
 echo "### DDT: NGINX -- PRODUCTION"
-envsubst < ${DDT_ROOT}/conf/nginx.ssl.template > /etc/nginx/conf.d/local.conf
+envsubst < ${DDT_ROOT}/templates/ssl.conf > /etc/nginx/conf.d/local.conf
 while :; do sleep 6h & wait $!; nginx -s reload; done & nginx -g "daemon off;"

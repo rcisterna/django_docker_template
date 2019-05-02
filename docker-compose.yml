@@ -21,10 +21,10 @@ services:
       - .env
     entrypoint:
       - sh
-      - ${DDT_ROOT}/conf/ep_api.sh
+      - ${DDT_ROOT}/entrypoints/api.sh
     volumes:
       - ./api/:${DDT_ROOT}/src/
-      - ./dkr/conf:${DDT_ROOT}/conf/
+      - ./dkr/entrypoints:${DDT_ROOT}/entrypoints/
       - vol_static:${DDT_ROOT}/static
       - vol_media:${DDT_ROOT}/media
     networks:
@@ -43,10 +43,10 @@ services:
       - .env
     entrypoint:
       - sh
-      - ${DDT_ROOT}/conf/ep_vue.sh
+      - ${DDT_ROOT}/entrypoints/vue.sh
     volumes:
       - ./vue/src/:${DDT_ROOT}/src/
-      - ./dkr/conf:${DDT_ROOT}/conf/
+      - ./dkr/entrypoints:${DDT_ROOT}/entrypoints/
     networks:
       - net_vue
     restart: 'always'
@@ -59,9 +59,10 @@ services:
       - .env
     entrypoint:
       - sh
-      - ${DDT_ROOT}/conf/ep_nginx.sh
+      - ${DDT_ROOT}/entrypoints/nginx.sh
     volumes:
-      - ./dkr/conf/:${DDT_ROOT}/conf/
+      - ./dkr/entrypoints/:${DDT_ROOT}/entrypoints/
+      - ./dkr/nginx/:${DDT_ROOT}/templates/
       - vol_static:${DDT_ROOT}/static
       - vol_media:${DDT_ROOT}/media
       - vol_letsencrypt:/etc/letsencrypt
@@ -80,9 +81,9 @@ services:
       - .env
     entrypoint:
       - sh
-      - ${DDT_ROOT}/conf/ep_certbot.sh
+      - ${DDT_ROOT}/entrypoints/certbot.sh
     volumes:
-      - ./dkr/conf/:${DDT_ROOT}/conf/
+      - ./dkr/entrypoints/:${DDT_ROOT}/entrypoints/
       - vol_letsencrypt:/etc/letsencrypt
       - vol_certbot:${DDT_ROOT}/certbot
     networks:
