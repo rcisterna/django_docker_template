@@ -21,7 +21,10 @@ ALLOWED_HOSTS = os.environ['DDT_API_DOMAINS'].split() if INSIDE_DOCKER else []
 
 # Application definition
 
+AUTH_USER_MODEL = 'authentication.User'
+
 INSTALLED_APPS = [
+    'authentication',
     'commands',
     'corsheaders',
     'rest_framework',
