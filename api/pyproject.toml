@@ -9,6 +9,8 @@ python = "^3.5"
 django = "{{ django_version }}"
 gunicorn = "^19.9"
 psycopg2 = "^2.8"
+djangorestframework = "^3.9"
+django-cors-headers = "^2.5"
 
 [tool.poetry.dev-dependencies]
 
