@@ -20,6 +20,7 @@ python ${DDT_ROOT}/src/manage.py sucreator || exit 1
 echo "### DDT: API -- GUNICORN"
 python ${DDT_ROOT}/src/manage.py collectstatic --no-input \
 && gunicorn {{ project_name }}.wsgi:application \
+	$([[ "$DDT_ENV" != "production" ]] && echo "--reload" || echo "--preload") \
 	--name {{ project_name }} \
 	--log-level $([[ "$DDT_ENV" != "production" ]] && echo "info" || echo "warning") \
 	--error-logfile '-' \
