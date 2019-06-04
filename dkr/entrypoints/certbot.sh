@@ -17,7 +17,6 @@ export LETSENCRYPT_DIR=/etc/letsencrypt
 # Crea el certificado si no existe
 if [ ! -e "${LETSENCRYPT_DIR}/cntx_ssl_done" ]; then
 	echo "### DDT: CERTBOT -- NEW CERTIFICATE"
-	mkdir -p ${LETSENCRYPT_DIR}/live/${DDT_SSL_NAME}
 
 	if [ ! -e "${LETSENCRYPT_DIR}/options-ssl-nginx.conf" ]; then
 		wget -O ${LETSENCRYPT_DIR}/options-ssl-nginx.conf \
