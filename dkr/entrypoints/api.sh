@@ -23,7 +23,6 @@ python ${DDT_ROOT}/src/manage.py collectstatic --no-input \
 	$([[ "$DDT_ENV" != "production" ]] && echo "--reload" || echo "--preload") \
 	--name {{ project_name }} \
 	--log-level $([[ "$DDT_ENV" != "production" ]] && echo "info" || echo "warning") \
-	--error-logfile '-' \
-	--access-logfile '-' \
-	--workers 2 \
+	--access-logfile '-' --error-logfile '-' \
+	--workers 2 --threads 4 --worker-class gthread --worker-tmp-dir /dev/shm \
 	--bind 0.0.0.0:8000
